@@ -23,6 +23,12 @@ local EspionageChooserModes:table = {
 local MISSION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -126;
 local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -248;
 
+local MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_X = 0;
+local MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_Y = 126;
+
+local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_X = 296;
+local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_Y = 126;
+
 -- ===========================================================================
 --  MEMBERS
 -- ===========================================================================
@@ -126,28 +132,43 @@ end
 -- ===========================================================================
 function RefreshBottom()
     if m_currentChooserMode == EspionageChooserModes.DESTINATION_CHOOSER then
-        -- DESTINATION_CHOOSER
+        -- DESTINATION_CHOOSER (show the destinations, and missions if city is selected)
+
+        -- unhide the filter options
+        Controls.DestinationFilterPulldown:SetHide(false);
+        Controls.DistrictFilterStack:SetHide(false);
+
         if m_city then
-            Controls.DestinationPanel:SetHide(true);
-            Controls.MissionPanel:SetHide(false);
+            -- Unhide the missions, and change the offsets
+            Controls.MissionGrid:SetHide(false);
+            Controls.MissionGrid:SetOffsetX(DESTINATION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_X);
+            Controls.MissionGrid:SetOffsetY(DESTINATION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_Y);
+
             Controls.PossibleMissionsLabel:SetHide(false);
             Controls.DestinationChooserButtons:SetHide(false);
             Controls.MissionScrollPanel:SetParentRelativeSizeY(DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y);
             RefreshMissionList();
         else
             Controls.DestinationPanel:SetHide(false);
-            Controls.MissionPanel:SetHide(true);
+            Controls.MissionGrid:SetHide(true);
             RefreshDestinationList();
         end
     else
-        -- MISSION_CHOOSER
-        -- Controls that should never be visible in the MISSION_CHOOSER
+        -- MISSION_CHOOSER (Only show missions, and hide the destinations)
+
+        -- Unhide the missions, and change the offsets
+        Controls.MissionGrid:SetHide(false);
+        Controls.MissionGrid:SetOffsetX(MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_X);
+        Controls.MissionGrid:SetOffsetY(MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_Y);
+
+        -- Hide the destination chooser related UI
         Controls.DestinationPanel:SetHide(true);
         Controls.PossibleMissionsLabel:SetHide(true);
         Controls.DestinationChooserButtons:SetHide(true);
 
-        -- Controls that should always be visible in the MISSION_CHOOSER
-        Controls.MissionPanel:SetHide(false);
+        -- Hide the filter options
+        Controls.DestinationFilterPulldown:SetHide(true);
+        Controls.DistrictFilterStack:SetHide(true);
 
         Controls.MissionScrollPanel:SetParentRelativeSizeY(MISSION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y);
         RefreshMissionList();
