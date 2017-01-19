@@ -124,3 +124,18 @@ function GetMissionLootString(mission:table)
 
     return lootString;
 end
+
+function hasDistrict(city:table, districtType:string)
+    local hasDistrict:boolean = false;
+    local cityDistricts:table = city:GetDistricts();
+    for i, district in cityDistricts:Members() do
+        if district:IsComplete() then
+            local districtInfo:table = GameInfo.Districts[district:GetType()];
+            if districtInfo.DistrictType == districtType then
+                return true
+            end
+        end
+    end
+
+    return false
+end

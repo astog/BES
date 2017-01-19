@@ -48,6 +48,8 @@ local m_spy                 :table = nil;
 -- While in MISSION_CHOOSER - City where the selected spy resides
 local m_city                :table = nil;
 
+local m_ctrlDown            :boolean = false
+
 -- ===========================================================================
 function Refresh()
     if m_spy == nil then
@@ -480,9 +482,38 @@ function AddPlayerCities(player:table)
         -- Check if the city is revealed
         local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
         if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
-            AddDestination(city);
+            if shouldDisplayCity(city) then
+                AddDestination(city);
+            end
         end
     end
+end
+
+-- ===========================================================================
+function shouldDisplayCity(city:table)
+    if Controls.FilterCityCenterCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_CITY_CENTER") then
+        return true
+    end
+    if Controls.FilterCommericalHubCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_COMMERCIAL_HUB") then
+        return true
+    end
+    if Controls.FilterTheaterCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_THEATER") then
+        return true
+    end
+    if Controls.FilterCampusCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_CAMPUS") then
+        return true
+    end
+    if Controls.FilterIndustrialCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_INDUSTRIAL_ZONE") then
+        return true
+    end
+    if Controls.FilterNeighborhoodCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_NEIGHBORHOOD") then
+        return true
+    end
+    if Controls.FilterSpaceportCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_SPACEPORT") then
+        return true
+    end
+
+    return false
 end
 
 -- ===========================================================================
@@ -528,18 +559,7 @@ end
 
 -- ===========================================================================
 function RefreshDistrictIcon(city:table, districtType:string, districtIcon:table)
-    local hasDistrict:boolean = false;
-    local cityDistricts:table = city:GetDistricts();
-    for i, district in cityDistricts:Members() do
-        if district:IsComplete() then
-            local districtInfo:table = GameInfo.Districts[district:GetType()];
-            if districtInfo.DistrictType == districtType then
-                hasDistrict = true;
-            end
-        end
-    end
-
-    if hasDistrict then
+    if hasDistrict(city, districtType) then
         districtIcon:SetHide(false);
     else
         districtIcon:SetHide(true);
@@ -644,6 +664,52 @@ end
 function OnCancel()
     m_city = nil;
     Refresh();
+end
+
+-- ===========================================================================
+function OnDistrickFilterCheckbox(pControl)
+    if m_ctrlDown then
+        -- Save original value
+        local originalBool = pControl:IsChecked()
+
+        Controls.FilterCityCenterCheckbox:SetCheck(false);
+        Controls.FilterCommericalHubCheckbox:SetCheck(false);
+        Controls.FilterTheaterCheckbox:SetCheck(false);
+        Controls.FilterCampusCheckbox:SetCheck(false);
+        Controls.FilterIndustrialCheckbox:SetCheck(false);
+        Controls.FilterNeighborhoodCheckbox:SetCheck(false);
+        Controls.FilterSpaceportCheckbox:SetCheck(false);
+
+        -- Restore the previous value
+        pControl:SetCheck(originalBool)
+    end
+
+    Refresh()
+end
+
+-- ===========================================================================
+function KeyDownHandler( key:number )
+    if key == Keys.VK_CONTROL then
+        m_ctrlDown = true
+    end
+    return false;
+end
+
+-- ===========================================================================
+function KeyUpHandler( key:number )
+    if key == Keys.VK_CONTROL then
+        m_ctrlDown = false
+    end
+    return false;
+end
+
+-- ===========================================================================
+function OnInputHandler( pInputStruct:table )
+    local uiMsg = pInputStruct:GetMessageType();
+    if uiMsg == KeyEvents.KeyDown then return KeyDownHandler( pInputStruct:GetKey() ); end
+    if uiMsg == KeyEvents.KeyUp then return KeyUpHandler( pInputStruct:GetKey() ); end
+
+    return false
 end
 
 -- ===========================================================================
@@ -818,6 +884,14 @@ function Initialize()
     Controls.CloseButton:RegisterCallback( Mouse.eLClick, OnClose );
     Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
 
+    Controls.FilterCityCenterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCityCenterCheckbox) end );
+    Controls.FilterCommericalHubCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCommericalHubCheckbox) end );
+    Controls.FilterTheaterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterTheaterCheckbox) end );
+    Controls.FilterCampusCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCampusCheckbox) end );
+    Controls.FilterIndustrialCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterIndustrialCheckbox) end );
+    Controls.FilterNeighborhoodCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterNeighborhoodCheckbox) end );
+    Controls.FilterSpaceportCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterSpaceportCheckbox) end );
+
     -- Game Engine Events
     Events.InterfaceModeChanged.Add( OnInterfaceModeChanged );
     Events.UnitSelectionChanged.Add( OnUnitSelectionChanged );
@@ -829,7 +903,7 @@ function Initialize()
 
     -- Animation controller events
     Events.SystemUpdateUI.Add(m_AnimSupport.OnUpdateUI);
-    ContextPtr:SetInputHandler(m_AnimSupport.OnInputHandler, true);
+    ContextPtr:SetInputHandler( OnInputHandler, true );
 
     -- Hot-Reload Events
     ContextPtr:SetInitHandler(OnInit);
