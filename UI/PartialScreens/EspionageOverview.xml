@@ -7,7 +7,7 @@
     <Container ID="OperativeTabContainer" Size="parent,parent">
       <!-- Operative Header	-->
       <Grid Size="parent,70" Offset="0,46" Texture="Controls_TitleBarDark" SliceCorner="10,4" SliceSize="22,24" SliceTextureSize="42,34">
-        <Label ID="OperativeHeader" Offset="10,38" Style="FontFlair24" SmallCaps="30" SmallCapsType="FirstOnly"/>
+        <Label ID="OperativeHeader" Offset="25,38" Style="FontFlair24" SmallCaps="30" SmallCapsType="FirstOnly"/>
       </Grid>
 
       <!-- Operative Stack	-->
@@ -20,32 +20,61 @@
     <Container ID="CityActivityTabContainer" Size="parent,parent">
       <!-- City Activity Header	-->
       <Grid Size="parent,100" Offset="0,46" Texture="Controls_TitleBarDark" SliceCorner="10,4" SliceSize="22,24" SliceTextureSize="42,34">
-        <Label Offset="10,38" Style="FontFlair24" SmallCaps="30" SmallCapsType="EveryWord" String="LOC_ESPIONAGEOVERVIEW_CITY_ACTIVITY_SUBHEADER"/>
+        <Label Offset="25,38" Style="FontFlair24" SmallCaps="30" SmallCapsType="EveryWord" String="LOC_ESPIONAGEOVERVIEW_CITY_ACTIVITY_SUBHEADER"/>
 
-        <Grid Anchor="L,B" Size="240,28" Offset="16,7" Style="ColumnHeader">
+        <Grid Anchor="L,B" Size="240,28" Offset="10,7" Style="ColumnHeader">
           <Label Anchor="C,C" Style="FontNormal18" String="LOC_ESPIONAGEOVERVIEW_CITY"/>
         </Grid>
 
-        <Grid Anchor="R,B" Size="240,28" Offset="16,7" Style="ColumnHeader">
+        <Grid Anchor="R,B" Size="240,28" Offset="22,7" Style="ColumnHeader">
           <!-- District Icons -->
-          <Stack Anchor="C,C" Offset="0,0" StackGrowth="Right">
-            <Image ID="CityCenterIcon" Size="32,32" Texture="Districts32" TextureOffset="0,0"/>
-            <Image ID="CommericalIcon" Size="32,32" Texture="Districts32" TextureOffset="192,0"/>
-            <Image ID="TheaterIcon" Size="32,32" Texture="Districts32" TextureOffset="0,32"/>
-            <Image ID="ScienceIcon" Size="32,32" Texture="Districts32" TextureOffset="64,0"/>
-            <Image ID="IndustrialIcon" Size="32,32" Texture="Districts32" TextureOffset="32,32"/>
-            <Image ID="NeighborhoodIcon" Size="32,32" Texture="Districts32" TextureOffset="64,32"/>
-            <Image ID="SpaceIcon" Size="32,32" Texture="Districts32" TextureOffset="128,32"/>
+          <Stack ID="DistrictFilterStack" StackGrowth="Right" StackPadding="-15" Offset="15,-27" Anchor="L,T">
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterCityCenterCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="0,0"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox  ID="FilterCommericalHubCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="192,0"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterTheaterCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="0,32"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterCampusCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="64,0"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterIndustrialCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="32,32"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterNeighborhoodCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="64,32"/>
+            </Stack>
+
+            <Stack StackGrowth="Down" StackPadding="8">
+              <CheckBox ID="FilterSpaceportCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+              <Image Size="32,32" Texture="Districts32" Anchor="C,B" Offset="-15,-5" Color="255,255,255,255" TextureOffset="128,32"/>
+            </Stack>
           </Stack>
         </Grid>
       </Grid>
 
       <!-- City Activity Stack	-->
-      <ScrollPanel ID="CityActivityScrollPanel" Anchor="R,B" Size="parent-22,parent-156" Offset="12,6" Vertical="1">
-        <ScrollBar Anchor="R,C" AnchorSide="O,I"  Offset="-2,0" Style="ScrollVerticalBar"/>
+      <Container Anchor="L,C" Offset="12,70" Size="parent-22,parent-156">
+        <ScrollPanel ID="CityActivityScrollPanel" Anchor="L,C" Size="parent,parent" Vertical="1">
+          <ScrollBar Anchor="R,C" AnchorSide="O,I"  Offset="-12,0" Style="ScrollVerticalBar"/>
 
-        <Stack ID="CityActivityStack" Anchor="C,T" Offset="2,0" StackGrowth="Down" StackPadding="4"/>
-      </ScrollPanel>
+          <Stack ID="CityActivityStack" Anchor="L,T" Offset="-4,0" StackGrowth="Down" StackPadding="4"/>
+        </ScrollPanel>
+      </Container>
     </Container>
 
     <!-- ==================================================================	-->
@@ -271,7 +300,7 @@
       </GridButton>
 
       <!-- District Icons -->
-      <Stack ID="CityDistrictStack" Anchor="R,C" Offset="10,0" StackGrowth="Right">
+      <Stack ID="CityDistrictStack" Anchor="C,C" Offset="10,-16" StackGrowth="Right">
       </Stack>
     </Grid>
   </Instance>

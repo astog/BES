@@ -164,7 +164,7 @@ function RefreshCityActivity()
         end
     end
 
-    Controls.CityActivityStack:ReprocessAnchoring();
+    -- Controls.CityActivityStack:ReprocessAnchoring();
     Controls.CityActivityScrollPanel:CalculateSize();
 end
 
@@ -313,10 +313,45 @@ function AddPlayerCities(player:table)
     for j, city in playerCities:Members() do
         -- Check if the city is revealed
         local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
-        if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
+        if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) and shouldDisplayCity(city)then
             AddCity(city);
         end
     end
+end
+
+-- ===========================================================================
+function shouldDisplayCity(city:table)
+    local isValid = true;
+    if Controls.FilterCityCenterCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_CITY_CENTER") then
+        isValid = false
+    end
+    if isValid and Controls.FilterCommericalHubCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_COMMERCIAL_HUB") then
+        isValid = false
+    end
+    if isValid and Controls.FilterTheaterCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_THEATER") then
+        isValid = false
+    end
+    if isValid and Controls.FilterCampusCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_CAMPUS") then
+        isValid = false
+    end
+    if isValid and Controls.FilterIndustrialCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_INDUSTRIAL_ZONE") then
+        isValid = false
+    end
+    if isValid and Controls.FilterNeighborhoodCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_NEIGHBORHOOD") then
+        isValid = false
+    end
+    if isValid and Controls.FilterSpaceportCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_SPACEPORT") then
+        isValid = false
+    end
+
+    return isValid
 end
 
 -- ===========================================================================
@@ -438,6 +473,27 @@ function AddDistrictIcon(stackControl:table, city:table, districtType:string)
     else
         districtInstance.SpyIconBack:SetHide(true);
     end
+end
+
+-- ===========================================================================
+function OnDistrickFilterCheckbox(pControl)
+    if m_ctrlDown then
+        -- Save original value
+        local originalBool = pControl:IsChecked()
+
+        Controls.FilterCityCenterCheckbox:SetCheck(false);
+        Controls.FilterCommericalHubCheckbox:SetCheck(false);
+        Controls.FilterTheaterCheckbox:SetCheck(false);
+        Controls.FilterCampusCheckbox:SetCheck(false);
+        Controls.FilterIndustrialCheckbox:SetCheck(false);
+        Controls.FilterNeighborhoodCheckbox:SetCheck(false);
+        Controls.FilterSpaceportCheckbox:SetCheck(false);
+
+        -- Restore the previous value
+        pControl:SetCheck(originalBool)
+    end
+
+    Refresh()
 end
 
 -- ===========================================================================
@@ -911,9 +967,18 @@ function Initialize()
     print("Initializing BES Overview")
 
     Controls.Title:SetText(Locale.Lookup("LOC_ESPIONAGE_TITLE"));
+
     -- Control Events
     Controls.CloseButton:RegisterCallback(Mouse.eLClick, OnClose);
     Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+
+    Controls.FilterCityCenterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCityCenterCheckbox) end );
+    Controls.FilterCommericalHubCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCommericalHubCheckbox) end );
+    Controls.FilterTheaterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterTheaterCheckbox) end );
+    Controls.FilterCampusCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCampusCheckbox) end );
+    Controls.FilterIndustrialCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterIndustrialCheckbox) end );
+    Controls.FilterNeighborhoodCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterNeighborhoodCheckbox) end );
+    Controls.FilterSpaceportCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterSpaceportCheckbox) end );
 
     -- Lua Events
     LuaEvents.PartialScreenHooks_OpenEspionage.Add( OnOpen );
