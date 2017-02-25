@@ -86,32 +86,32 @@
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterCommericalHubCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterCommericalHubCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_COMMERCIAL_HUB]"/>
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterTheaterCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterTheaterCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_THEATER]"/>
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterCampusCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterCampusCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_CAMPUS]"/>
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterIndustrialCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterIndustrialCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_INDUSTRIAL_ZONE]"/>
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterNeighborhoodCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterNeighborhoodCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_NEIGHBORHOOD]"/>
       </Stack>
 
       <Stack StackGrowth="Down" StackPadding="8">
-        <CheckBox ID="FilterSpaceportCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
+        <CheckBox ID="FilterSpaceportCheckbox" IsChecked="0" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_SPACEPORT]"/>
       </Stack>
     </Stack>

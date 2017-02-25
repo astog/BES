@@ -491,29 +491,37 @@ end
 
 -- ===========================================================================
 function shouldDisplayCity(city:table)
-    if Controls.FilterCityCenterCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_CITY_CENTER") then
-        return true
+    local isValid = true;
+    if Controls.FilterCityCenterCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_CITY_CENTER") then
+        isValid = false
     end
-    if Controls.FilterCommericalHubCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_COMMERCIAL_HUB") then
-        return true
+    if isValid and Controls.FilterCommericalHubCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_COMMERCIAL_HUB") then
+        isValid = false
     end
-    if Controls.FilterTheaterCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_THEATER") then
-        return true
+    if isValid and Controls.FilterTheaterCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_THEATER") then
+        isValid = false
     end
-    if Controls.FilterCampusCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_CAMPUS") then
-        return true
+    if isValid and Controls.FilterCampusCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_CAMPUS") then
+        isValid = false
     end
-    if Controls.FilterIndustrialCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_INDUSTRIAL_ZONE") then
-        return true
+    if isValid and Controls.FilterIndustrialCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_INDUSTRIAL_ZONE") then
+        isValid = false
     end
-    if Controls.FilterNeighborhoodCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_NEIGHBORHOOD") then
-        return true
+    if isValid and Controls.FilterNeighborhoodCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_NEIGHBORHOOD") then
+        isValid = false
     end
-    if Controls.FilterSpaceportCheckbox:IsChecked() and hasDistrict(city, "DISTRICT_SPACEPORT") then
-        return true
+    if isValid and Controls.FilterSpaceportCheckbox:IsChecked() and not
+            hasDistrict(city, "DISTRICT_SPACEPORT") then
+        isValid = false
     end
 
-    return false
+    return isValid
 end
 
 -- ===========================================================================
