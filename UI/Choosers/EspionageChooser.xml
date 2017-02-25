@@ -74,7 +74,7 @@
       </InstanceData>
 
       <!-- Show Route Text -->
-      <Label String="LOC_ROUTECHOOSER_FILTER_SHOWROUTES" Anchor="L,T" Offset="30,-19" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255"/>
+      <Label String="LOC_ESPIONAGECHOOSER_FILTER_SHOW_CITIES" Anchor="L,T" Offset="30,-19" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255"/>
       <Image ID="PulldownOpenedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,0" Size="20,16" Anchor="L,T" Offset="7,-21"/>
       <Image ID="PulldownClosedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,60" Size="20,16" Anchor="L,T" Offset="7,-25"/>
     </PullDown>

@@ -32,6 +32,11 @@ local m_CityIM:table            = InstanceManager:new("CityInstance", "CityGrid"
 local m_EnemyOperativeIM:table  = InstanceManager:new("EnemyOperativeInstance", "GridButton", Controls.CapturedEnemyOperativeStack);
 local m_MissionHistoryIM:table  = InstanceManager:new("MissionHistoryInstance", "Top", Controls.MissionHistoryStack);
 
+-- Stores filter list and tracks the currently selected list
+local m_filterList:table = {};
+local m_filterCount:number = 0;
+local m_filterSelected:number = 1;
+
 -- A table of tabs indexed by EspionageTabs enum
 local m_tabs:table = nil;
 local m_selectedTab:number = -1;
@@ -148,23 +153,21 @@ function RefreshCityActivity()
         return;
     end
 
-    -- Add player owned cities
-    AddPlayerCities(localPlayer);
+    RefreshFilters();
 
     -- Add cities for other players
     local players:table = Game.GetPlayers();
     for i, player in ipairs(players) do
-        -- Ignore the local player since those cities were already added
-        if player:GetID() ~= localPlayer:GetID() then
-            local playerInfluence:table = player:GetInfluence();
-            -- Ignore city states (only they can receive influence)
-            if playerInfluence and not playerInfluence:CanReceiveInfluence() then
-                AddPlayerCities(player);
-            end
+        local playerInfluence:table = player:GetInfluence();
+        -- Ignore city states (only they can receive influence)
+        if playerInfluence and not playerInfluence:CanReceiveInfluence() and
+            m_filterList[m_filterSelected].FilterFunction(player) then
+            AddPlayerCities(player);
         end
     end
 
     -- Controls.CityActivityStack:ReprocessAnchoring();
+    Controls.CityActivityStack:CalculateSize();
     Controls.CityActivityScrollPanel:CalculateSize();
 end
 
@@ -494,6 +497,105 @@ function OnDistrickFilterCheckbox(pControl)
     end
 
     Refresh()
+end
+
+-- ===========================================================================
+function IsCityState(player:table)
+    local playerInfluence:table = player:GetInfluence();
+    if  playerInfluence:CanReceiveInfluence() then
+        return true
+    end
+
+    return false
+end
+
+-- ===========================================================================
+function HasMetAndAlive(player:table)
+    if localPlayerID == player:GetID() then
+        return true
+    end
+
+    local localPlayerID = Game.GetLocalPlayer()
+    local localPlayer = Players[localPlayerID];
+    local localPlayerDiplomacy = localPlayer:GetDiplomacy();
+
+    if player:IsAlive() and localPlayerDiplomacy:HasMet(player:GetID()) then
+        return true;
+    end
+
+    return false;
+end
+
+-- ---------------------------------------------------------------------------
+-- Filter pulldown functions
+-- ---------------------------------------------------------------------------
+function RefreshFilters()
+    -- Clear current filters
+    Controls.DestinationFilterPulldown:ClearEntries();
+    m_filterList = {};
+    m_filterCount = 0;
+
+    -- Add "All" Filter
+    AddFilter(Locale.Lookup("LOC_ESPIONAGECHOOSER_FILTER_ALL"), function(a) return true; end);
+
+    -- Add Players Filter
+    local players:table = Game.GetPlayers();
+    for i, pPlayer in ipairs(players) do
+        if not IsCityState(pPlayer) and HasMetAndAlive(pPlayer) and not pPlayer:IsBarbarian() then
+            local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
+            local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
+            AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
+        end
+    end
+
+    -- Add filters to pulldown
+    for index, filter in ipairs(m_filterList) do
+        AddFilterEntry(index);
+    end
+
+    -- Select first filter
+    Controls.FilterButton:SetText(m_filterList[m_filterSelected].FilterText);
+
+    -- Calculate Internals
+    Controls.DestinationFilterPulldown:CalculateInternals();
+
+    UpdateFilterArrow();
+end
+
+function AddFilter( filterName:string, filterFunction )
+    -- Make sure we don't add duplicate filters
+    for index, filter in ipairs(m_filterList) do
+        if filter.FilterText == filterName then
+            return;
+        end
+    end
+
+    m_filterCount = m_filterCount + 1;
+    m_filterList[m_filterCount] = {FilterText=filterName, FilterFunction=filterFunction};
+end
+
+function AddFilterEntry( filterIndex:number )
+    local filterEntry:table = {};
+    Controls.DestinationFilterPulldown:BuildEntry( "FilterEntry", filterEntry );
+    filterEntry.Button:SetText(m_filterList[filterIndex].FilterText);
+    filterEntry.Button:SetVoids(i, filterIndex);
+end
+
+function UpdateFilterArrow()
+    if Controls.DestinationFilterPulldown:IsOpen() then
+        Controls.PulldownOpenedArrow:SetHide(true);
+        Controls.PulldownClosedArrow:SetHide(false);
+    else
+        Controls.PulldownOpenedArrow:SetHide(false);
+        Controls.PulldownClosedArrow:SetHide(true);
+    end
+end
+
+function OnFilterSelected( index:number, filterIndex:number )
+    m_filterSelected = filterIndex;
+    Controls.FilterButton:SetText(m_filterList[m_filterSelected].FilterText);
+
+    Refresh();
 end
 
 -- ===========================================================================
@@ -971,7 +1073,7 @@ function Initialize()
     -- Control Events
     Controls.CloseButton:RegisterCallback(Mouse.eLClick, OnClose);
     Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
-
+    -- Filter Checkboxes
     Controls.FilterCityCenterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCityCenterCheckbox) end );
     Controls.FilterCommericalHubCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterCommericalHubCheckbox) end );
     Controls.FilterTheaterCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterTheaterCheckbox) end );
@@ -979,6 +1081,9 @@ function Initialize()
     Controls.FilterIndustrialCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterIndustrialCheckbox) end );
     Controls.FilterNeighborhoodCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterNeighborhoodCheckbox) end );
     Controls.FilterSpaceportCheckbox:RegisterCallback( Mouse.eLClick, function() OnDistrickFilterCheckbox(Controls.FilterSpaceportCheckbox) end );
+    -- Filter Pulldown
+    Controls.FilterButton:RegisterCallback( eLClick, UpdateFilterArrow );
+    Controls.DestinationFilterPulldown:RegisterSelectionCallback( OnFilterSelected );
 
     -- Lua Events
     LuaEvents.PartialScreenHooks_OpenEspionage.Add( OnOpen );
