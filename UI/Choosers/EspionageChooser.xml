@@ -54,7 +54,7 @@
     <Button         ID="CloseButton"        Anchor="L,T"  Offset="265,2" Style="CloseButtonSmall"/>
 
     <!-- Destination Panel -->
-    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="0,150" Anchor="C,T" Size="parent-10,25" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
+    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="0,157" Anchor="C,T" Size="parent-10,25" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
       <ButtonData>
         <GridButton   ID="FilterButton" TextAnchor="R,C" TextOffset="15,0" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255" Offset="0,-25" Size="50,-20" Texture="Controls_ButtonControl.dds" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" />
       </ButtonData>
@@ -79,7 +79,7 @@
       <Image ID="PulldownClosedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,60" Size="20,16" Anchor="L,T" Offset="7,-25"/>
     </PullDown>
 
-    <Stack ID="DistrictFilterStack" StackGrowth="Right" StackPadding="8" Offset="50,150" Anchor="L,T">
+    <Stack ID="DistrictFilterStack" StackGrowth="Right" StackPadding="8" Offset="50,156" Anchor="L,T">
       <Stack StackGrowth="Down" StackPadding="8">
         <CheckBox ID="FilterCityCenterCheckbox" IsChecked="1" Offset="0,4" BoxOnLeft="1" Style="WhiteSemiBold14" ButtonTexture="Controls_Checkbox.dds" ButtonSize="17,17" CheckTexture="Controls_Checkbox.dds" CheckSize="17,17" CheckTextureOffset="0,17" Anchor="L,T"/>
         <Label Offset="-2,0" Style="FontNormal14" String="[Icon_DISTRICT_CITYCENTER]"/>
@@ -116,14 +116,14 @@
       </Stack>
     </Stack>
 
-    <ScrollPanel    ID="DestinationPanel" Anchor="L,T" Offset="18,197" Size="parent-22,parent-200" Vertical="1" AutoScrollBar="0">
+    <ScrollPanel    ID="DestinationPanel" Anchor="L,T" Offset="18,202" Size="parent-22,parent-200" Vertical="1" AutoScrollBar="0">
       <ScrollBar    Anchor="L,C" Size="11,parent" AnchorSide="O,I" Offset="4,0" Style="ScrollVerticalBar" />
       <Stack        ID="DestinationStack" StackGrowth="Bottom" StackPadding="2" />
     </ScrollPanel>
 
     <!-- Mission Panel -->
-    <Grid ID="MissionGrid" Size="parent,parent" Offset="296,126" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16" ConsumeMouse="1">
-      <Stack ID="MissionPanel"  StachGrowth="Down" StackPadding="2">
+    <Grid ID="MissionGrid" Size="parent,0" AutoSize="V" Offset="296,0" AutoSizePadding="0,2" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16" ConsumeMouse="1">
+      <Stack ID="MissionPanel" Offset="0,6" StachGrowth="Down" StackPadding="2">
         <Grid ID="PossibleMissionsLabel" Size="parent+2,50" Offset="0,-7" Texture="Controls_SubHeader3" SliceCorner="10,10" SliceSize="14,14" SliceTextureSize="34,34">
           <Label Anchor="C,C" Style="FontFlair20" SmallCaps="26" SmallCapsType="EveryWord" String="LOC_ESPIONAGECHOOSER_POSSIBLE_MISSIONS"/>
         </Grid>
@@ -134,7 +134,7 @@
           <Stack        ID="MissionStack" StackGrowth="Bottom" StackPadding="2" />
         </ScrollPanel>
 
-        <Grid ID="DestinationChooserButtons" Anchor="L,B" Size="parent,78" Offset="0,0" Texture="Controls_SubHeader3" SliceCorner="10,10" SliceSize="14,14" SliceTextureSize="34,34">
+        <Grid ID="DestinationChooserButtons" Anchor="L,B" Size="parent,78" Offset="0,4" Texture="Controls_SubHeader3" SliceCorner="10,10" SliceSize="14,14" SliceTextureSize="34,34">
           <!-- Confirm Button -->
           <GridButton ID="ConfirmButton" Size="270,26" Offset="0,40" Anchor="C,B" String="LOC_ESPIONAGECHOOSER_CONFIRM_PLACEMENT" Style="FontFlair14" FontStyle="Shadows" TextOffset="0,1" EffectColor="0,0,0,255" SmallCaps="20" SmallCapsType="EveryWord">
             <GridData Texture="Controls_ConfirmSmall" StateOffsetIncrement="0,26" SliceCorner="26,13" SliceSize="2,2" SliceTextureSize="51,26"/>

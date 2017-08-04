@@ -203,6 +203,7 @@ function RefreshDestinationList()
         end
     end
 
+    Controls.DestinationStack:CalculateSize();
     Controls.DestinationPanel:CalculateInternalSize();
 end
 
