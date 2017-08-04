@@ -6,7 +6,6 @@
 include("InstanceManager");
 include("AnimSidePanelSupport");
 include("SupportFunctions");
-include("PopupDialogSupport");
 include("EspionageSupport");
 
 -- ===========================================================================
@@ -21,7 +20,7 @@ local EspionageChooserModes:table = {
 };
 
 local MISSION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -126;
-local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -248;
+local DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y = -257;
 
 local MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_X = 0;
 local MISSION_CHOOSER_MISSIONSCROLLPANEL_OFFSET_Y = 126;
@@ -189,6 +188,7 @@ end
 -- ===========================================================================
 function RefreshDestinationList()
     m_RouteChoiceIM:ResetInstances();
+    local localPlayer = Players[Game.GetLocalPlayer()];
 
     -- Add each players cities to destination list
     local players:table = Game.GetPlayers();
@@ -197,12 +197,13 @@ function RefreshDestinationList()
         -- Ignore city states (only they can receive influence)
         if playerInfluence and not playerInfluence:CanReceiveInfluence() and
                 m_filterList[m_filterSelected].FilterFunction(player) then
-            AddPlayerCities(player)
+            if (player:GetID() == localPlayer:GetID() or player:GetTeam() == -1 or localPlayer:GetTeam() == -1 or player:GetTeam() ~= localPlayer:GetTeam()) then
+                AddPlayerCities(player)
+            end
         end
     end
 
-    Controls.DestinationStack:CalculateSize();
-    Controls.DestinationPanel:CalculateSize();
+    Controls.DestinationPanel:CalculateInternalSize();
 end
 
 -- ===========================================================================
@@ -462,7 +463,7 @@ function UpdateCityBanner(city:table)
     Controls.BannerDarker:SetColor( darkerBackColor );
     Controls.BannerLighter:SetColor( brighterBackColor );
     Controls.CityName:SetColor( frontColor );
-    Controls.CityName:SetText(Locale.ToUpper(city:GetName()));
+    TruncateStringWithTooltip(Controls.CityName, 195, Locale.ToUpper(city:GetName()));
     Controls.BannerBase:SetHide(false);
 
     if m_currentChooserMode == EspionageChooserModes.DESTINATION_CHOOSER then
@@ -538,7 +539,7 @@ function AddDestination(city:table)
     local destinationInstance:table = m_RouteChoiceIM:GetInstance();
 
     -- Update city name and banner color
-    destinationInstance.CityName:SetText(Locale.ToUpper(city:GetName()));
+    TruncateStringWithTooltip(destinationInstance.CityName, 185, Locale.ToUpper(city:GetName()));
 
     local backColor:number, frontColor:number  = UI.GetPlayerColors( city:GetOwner() );
     local darkerBackColor:number = DarkenLightenColor(backColor,(-85),238);
