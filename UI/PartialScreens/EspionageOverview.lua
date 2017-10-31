@@ -12,8 +12,9 @@ include( "TabSupport" );
 -- ===========================================================================
 
 local RELOAD_CACHE_ID:string = "EspionageOverview"; -- Must be unique (usually the same as the file name)
-local MAX_BEFORE_TRUNC_MISSION_NAME     :number = 170;
-local MAX_BEFORE_TRUNC_ASK_FOR_TRADE        :number = 135;
+local MAX_BEFORE_TRUNC_MISSION_NAME   :number = 170;
+local MAX_BEFORE_TRUNC_ASK_FOR_TRADE  :number = 135;
+local TRAVEL_DEST_TRUNCATE_WIDTH		  :number = 170;
 
 local EspionageTabs:table = {
     OPERATIVES      = 0;
@@ -599,6 +600,18 @@ function OnFilterSelected( index:number, filterIndex:number )
 end
 
 -- ===========================================================================
+function AddTopDistrictToolTips()
+  Controls.CityCenterIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CITY_CENTER_NAME"));
+  Controls.CommericalIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_COMMERCIAL_HUB_NAME"));
+  Controls.TheaterIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_THEATER_NAME"));
+  Controls.ScienceIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CAMPUS_NAME"));
+  Controls.IndustrialIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_INDUSTRIAL_ZONE_NAME"));
+  Controls.NeighborhoodIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_NEIGHBORHOOD_NAME"));
+  Controls.SpaceIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_SPACEPORT_NAME"));
+end
+
+
+-- ===========================================================================
 --  Called once during Init
 -- ===========================================================================
 function PopulateTabs()
@@ -819,7 +832,7 @@ function AddOffMapOperative(spy:table)
     local spyPlot:table = Map.GetPlot(spy.XLocation, spy.YLocation);
     local targetCity:table = Cities.GetPlotPurchaseCity(spyPlot);
     if targetCity then
-        operativeInstance.TravelDestinationName:SetText(Locale.Lookup("LOC_ESPIONAGEOVERVIEW_TRANSIT_TO", targetCity:GetName()));
+      TruncateStringWithTooltip(operativeInstance.TravelDestinationName, TRAVEL_DEST_TRUNCATE_WIDTH, Locale.Lookup("LOC_ESPIONAGEOVERVIEW_TRANSIT_TO", targetCity:GetName()));
     end
 
     operativeInstance.CityBanner:SetHide(true);
@@ -1114,5 +1127,6 @@ function Initialize()
     LuaEvents.GameDebug_Return.Add(OnGameDebugReturn);
 
     PopulateTabs();
+    AddTopDistrictToolTips();
 end
 Initialize();
