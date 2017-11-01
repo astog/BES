@@ -127,7 +127,7 @@
     <!-- ================================================================== -->
     <!--  Tabs                                                      -->
     <!-- ================================================================== -->
-    <Container ID="TabContainer" Anchor="C,T" Offset="0,44" Size="514,31">
+    <Container ID="TabContainer" Anchor="C,T" Offset="0,44" Size="514,35">
       <Grid Size="parent,parent" Texture="Controls_TabLedgeCaps"  SliceCorner="20,3" SliceSize="203,24" SliceTextureSize="243,31">
         <Image Texture="Controls_TabLedgeFill" Size="parent-200,23" StretchMode="Tile" Anchor="C,C"/>
         <GridButton ID="OperativesTabButton" Size="130,34" Style="TabButton" FontSize="14" TextOffset="0,2" String="LOC_ESPIONAGEOVERVIEW_OPERATIVES_HEADER">
@@ -321,14 +321,14 @@
       </GridButton>
 
       <!-- District Icons -->
-      <Stack ID="CityDistrictStack" Anchor="C,C" Offset="10,-16" StackGrowth="Right">
+      <Stack ID="CityDistrictStack" Anchor="L,C" Offset="252,0" StackGrowth="Right">
       </Stack>
     </Grid>
   </Instance>
 
   <!-- District Instance -->
   <Instance Name="CityDistrictInstance">
-    <Image ID="DistrictIcon" Size="32,32" Texture="Districts32" Color="255,255,255,128">
+    <Image ID="DistrictIcon" Size="32,32" Texture="Districts32" Color="255,255,255,255">
       <Image ID="SpyIconBack" Anchor="C,C" Size="34,31" Offset="0,0" Texture="Espionage_SpyIconBack">
         <Image ID="SpyIconFront" Anchor="C,C" Size="30,27" Offset="0,0" Texture="Espionage_SpyIconFront"/>
       </Image>

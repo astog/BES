@@ -501,22 +501,12 @@ function OnDistrickFilterCheckbox(pControl)
 end
 
 -- ===========================================================================
-function IsCityState(player:table)
-    local playerInfluence:table = player:GetInfluence();
-    if  playerInfluence:CanReceiveInfluence() then
-        return true
-    end
-
-    return false
-end
-
--- ===========================================================================
 function HasMetAndAlive(player:table)
+    local localPlayerID = Game.GetLocalPlayer()
     if localPlayerID == player:GetID() then
         return true
     end
 
-    local localPlayerID = Game.GetLocalPlayer()
     local localPlayer = Players[localPlayerID];
     local localPlayerDiplomacy = localPlayer:GetDiplomacy();
 
@@ -542,7 +532,7 @@ function RefreshFilters()
     -- Add Players Filter
     local players:table = Game.GetPlayers();
     for i, pPlayer in ipairs(players) do
-        if not IsCityState(pPlayer) and HasMetAndAlive(pPlayer) and not pPlayer:IsBarbarian() then
+        if pPlayer:IsMajor() and HasMetAndAlive(pPlayer) and not pPlayer:IsBarbarian() then
             local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
             local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
             AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
