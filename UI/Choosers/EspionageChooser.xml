@@ -54,7 +54,7 @@
     <Button         ID="CloseButton"        Anchor="L,T"  Offset="265,2" Style="CloseButtonSmall"/>
 
     <!-- Destination Panel -->
-    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="0,157" Anchor="C,T" Size="parent-10,25" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
+    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="0,157" Anchor="C,T" Size="280,25" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
       <ButtonData>
         <GridButton   ID="FilterButton" TextAnchor="R,C" TextOffset="15,0" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255" Offset="0,-25" Size="50,-20" Texture="Controls_ButtonControl.dds" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" />
       </ButtonData>
