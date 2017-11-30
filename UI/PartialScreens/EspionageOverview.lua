@@ -420,21 +420,8 @@ function AddDistrictIcon(stackControl:table, city:table, districtType:string)
 
     local toolTipString:string = "";
 
-    -- Check if we have this district
-    -- local hasDistrict:boolean = false;
-    -- local cityDistricts:table = city:GetDistricts();
-    -- for i, district in cityDistricts:Members() do
-    --     if district:IsComplete() then
-    --         local districtInfo:table = GameInfo.Districts[district:GetType()];
-    --         if districtInfo.DistrictType == districtType then
-    --             hasDistrict = true;
-    --             toolTipString = Locale.Lookup(districtInfo.Name);
-    --         end
-    --     end
-    -- end
-
     -- We're manipulating the alpha to hide each element so they maintain their stack positions
-    if hasDistrict(city, districtType) then
+    if hasDistrict(city, districtType) then --ARISTOS: make use of the espionagesupport.lua funtion, more efficient and has been fixed to only show valid targets
         toolTipString = Locale.Lookup(GameInfo.Districts[districtType].Name);
         districtInstance.DistrictIcon:SetAlpha(1.0);
     else
