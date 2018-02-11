@@ -437,7 +437,7 @@ function AddDistrictIcon(stackControl:table, city:table, districtType:string)
     local playerUnits:table = Players[Game.GetLocalPlayer()]:GetUnits();
     for i,unit in playerUnits:Members() do
         local unitInfo:table = GameInfo.Units[unit:GetUnitType()];
-        if not shouldShowActiveSpy and unitInfo.Spy then
+        if unitInfo.Spy then
             local operationType:number = unit:GetSpyOperation();
             local operationInfo:table = GameInfo.UnitOperations[operationType];
             if operationInfo then
@@ -447,8 +447,17 @@ function AddDistrictIcon(stackControl:table, city:table, districtType:string)
                     local activeDistrictType:number = spyPlot:GetDistrictType();
                     local districtInfo = GameInfo.Districts[activeDistrictType];
                     if districtInfo.DistrictType == districtType then
+                        -- Turns Remaining
+                        local turnsRemaining:number = unit:GetSpyOperationEndTurn() - Game.GetCurrentGameTurn();
+                        if turnsRemaining <= 0 then
+                            turnsRemaining = 0;
+                        end
+
                         shouldShowActiveSpy = true;
-                        toolTipString = toolTipString .. "[NEWLINE]" .. Locale.Lookup(operationInfo.Description);
+                        toolTipString = toolTipString .. "[NEWLINE]" ..
+                            Locale.Lookup(unit:GetName()) .. ": " ..
+                            Locale.Lookup(operationInfo.Description) .. " -- " ..
+                            Locale.Lookup("LOC_ESPIONAGEOVERVIEW_MORE_TURNS", turnsRemaining);
                     end
                 end
             end
