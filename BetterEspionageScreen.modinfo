@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="ebdf2824-352e-49c3-90c1-743a89180da8"  version="1.0">
+<Mod id="ebdf2824-352e-49c3-90c1-743a89180da8"  version="1.0.1">
   <Properties>
     <Name>LOC_BES_NAME</Name>
     <Stability>LOC_BES_STABILITY</Stability>
     <Teaser>LOC_BES_TEASER</Teaser>
     <Description>LOC_BES_DESCRIPTION</Description>
     <Authors>LOC_BES_AUTHORS</Authors>
+    <AffectsSavedGames>0</AffectsSavedGames> <!-- See /Base/Assets/UI/FrontEnd/Mods.lua#L371 inside function RefreshModDetails() -->
   </Properties>
 
   <Components>
