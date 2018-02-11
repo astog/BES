@@ -591,13 +591,13 @@ end
 
 -- ===========================================================================
 function AddTopDistrictToolTips()
-  Controls.CityCenterIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CITY_CENTER_NAME"));
-  Controls.CommericalIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_COMMERCIAL_HUB_NAME"));
-  Controls.TheaterIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_THEATER_NAME"));
-  Controls.ScienceIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CAMPUS_NAME"));
-  Controls.IndustrialIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_INDUSTRIAL_ZONE_NAME"));
-  Controls.NeighborhoodIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_NEIGHBORHOOD_NAME"));
-  Controls.SpaceIcon:SetToolTipString(Locale.Lookup("LOC_DISTRICT_SPACEPORT_NAME"));
+    Controls.FilterCityCenterCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CITY_CENTER_NAME"));
+    Controls.FilterCommericalHubCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_COMMERCIAL_HUB_NAME"));
+    Controls.FilterTheaterCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_THEATER_NAME"));
+    Controls.FilterCampusCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_CAMPUS_NAME"));
+    Controls.FilterIndustrialCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_INDUSTRIAL_ZONE_NAME"));
+    Controls.FilterNeighborhoodCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_NEIGHBORHOOD_NAME"));
+    Controls.FilterSpaceportCheckbox:SetToolTipString(Locale.Lookup("LOC_DISTRICT_SPACEPORT_NAME"));
 end
 
 
