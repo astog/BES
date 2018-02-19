@@ -155,6 +155,7 @@ function RefreshBottom()
             Controls.PossibleMissionsLabel:SetHide(false);
             Controls.DestinationChooserButtons:SetHide(false);
             Controls.MissionScrollPanel:SetParentRelativeSizeY(DESTINATION_CHOOSER_MISSIONSCROLLPANEL_RELATIVE_SIZE_Y);
+            RefreshDestinationList();
             RefreshMissionList();
         else
             Controls.DestinationPanel:SetHide(false);
@@ -188,17 +189,12 @@ end
 -- ===========================================================================
 function RefreshDestinationList()
     m_RouteChoiceIM:ResetInstances();
-    local localPlayer = Players[Game.GetLocalPlayer()];
 
     -- Add each players cities to destination list
     local players:table = Game.GetPlayers();
     for i, player in ipairs(players) do
-        -- Only show full civs
-        if player:IsMajor() and
-                m_filterList[m_filterSelected].FilterFunction(player) then
-            if (player:GetID() == localPlayer:GetID() or player:GetTeam() == -1 or localPlayer:GetTeam() == -1 or player:GetTeam() ~= localPlayer:GetTeam()) then
-                AddPlayerCities(player)
-            end
+        if m_filterList[m_filterSelected].FilterFunction(player) and ShouldAddPlayer(player) then
+            AddPlayerCities(player)
         end
     end
 
@@ -486,6 +482,26 @@ function UpdateCityBanner(city:table)
 end
 
 -- ===========================================================================
+function ShouldAddPlayer(player:table)
+    local localPlayer = Players[Game.GetLocalPlayer()];
+    -- Only show full civs
+    if player:IsMajor() then
+        if (player:GetID() == localPlayer:GetID() or player:GetTeam() == -1 or localPlayer:GetTeam() == -1 or player:GetTeam() ~= localPlayer:GetTeam()) then
+            return true
+        end
+    end
+    return false
+end
+
+-- ===========================================================================
+function ShouldAddToFilter(player:table)
+    if player:IsMajor() and HasMetAndAlive(player) and (not player:IsBarbarian()) then
+        return true
+    end
+    return false
+end
+
+-- ===========================================================================
 function AddPlayerCities(player:table)
     local playerCities:table = player:GetCities();
     for j, city in playerCities:Members() do
@@ -642,6 +658,7 @@ function AddDistrictIcon(stackControl:table, city:table, districtType:string)
         districtInstance.SpyIconBack:SetHide(true);
     end
 end
+
 -- ===========================================================================
 function RefreshDistrictIcon(city:table, districtType:string, districtIcon:table)
     if hasDistrict(city, districtType) then
@@ -694,6 +711,14 @@ function HasMetAndAlive(player:table)
     return false;
 end
 
+function IsCityState(player:table)
+    local playerInfluence:table = player:GetInfluence();
+    if  playerInfluence:CanReceiveInfluence() then
+        return true
+    end
+    return false
+end
+
 -- ---------------------------------------------------------------------------
 -- Filter pulldown functions
 -- ---------------------------------------------------------------------------
@@ -708,16 +733,18 @@ function RefreshFilters()
 
     -- Add Players Filter
     local players:table = Game.GetPlayers();
+    local addedCityStateFilter:boolean = false
     for i, pPlayer in ipairs(players) do
-        if pPlayer:IsMajor() and HasMetAndAlive(pPlayer) and not pPlayer:IsBarbarian() then
-            local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
-            local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
-            print("Adding " .. name)
-            AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
-        else
-            local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
-            local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
-            print("Skipping " .. name)
+        if ShouldAddToFilter(pPlayer) then
+            if pPlayer:IsMajor() then
+                local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
+                local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
+                AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
+            elseif not addedCityStateFilter then
+                -- Add "City States" Filter
+                AddFilter(Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE"), IsCityState);
+                addedCityStateFilter = true
+            end
         end
     end
 

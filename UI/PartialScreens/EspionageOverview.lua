@@ -160,10 +160,8 @@ function RefreshCityActivity()
     local players:table = Game.GetPlayers();
     for i, player in ipairs(players) do
         local playerInfluence:table = player:GetInfluence();
-        -- Ignore city states (only they can receive influence)
-        if playerInfluence and not playerInfluence:CanReceiveInfluence() and
-            m_filterList[m_filterSelected].FilterFunction(player) then
-            AddPlayerCities(player);
+        if m_filterList[m_filterSelected].FilterFunction(player) and ShouldAddPlayer(player) then
+            AddPlayerCities(player)
         end
     end
 
@@ -283,12 +281,16 @@ function AddMisisonHistoryInstance(mission:table)
         missionHistoryInstance.OperationIcon:SetHide(true);
     end
 
-    local iconString:string = "ICON_" .. operationInfo.TargetDistrict;
-    textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconString,32);
-    if textureSheet then
-        missionHistoryInstance.OperationDistrictIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+    if operationInfo.TargetDistrict ~= nil then
+        local iconString:string = "ICON_" .. operationInfo.TargetDistrict;
+        textureOffsetX, textureOffsetY, textureSheet = IconManager:FindIconAtlas(iconString,32);
+        if textureSheet then
+            missionHistoryInstance.OperationDistrictIcon:SetTexture(textureOffsetX, textureOffsetY, textureSheet);
+        else
+            UI.DataError("Unable to find icon for district: " .. iconString);
+        end
     else
-        UI.DataError("Unable to find icon for district: " .. iconString);
+        UI.DataError("Unable to find target district");
     end
 
     -- Scale the operation and district icons to match the operation description
@@ -324,38 +326,57 @@ function AddPlayerCities(player:table)
 end
 
 -- ===========================================================================
+function ShouldAddPlayer(player:table)
+    local localPlayer = Players[Game.GetLocalPlayer()];
+    -- Only show full civs
+    if player:IsMajor() then
+        if (player:GetID() == localPlayer:GetID() or player:GetTeam() == -1 or localPlayer:GetTeam() == -1 or player:GetTeam() ~= localPlayer:GetTeam()) then
+            return true
+        end
+    end
+    return false
+end
+
+-- ===========================================================================
+function ShouldAddToFilter(player:table)
+    if player:IsMajor() and HasMetAndAlive(player) and (not player:IsBarbarian()) then
+        return true
+    end
+    return false
+end
+
+-- ===========================================================================
 function shouldDisplayCity(city:table)
-    local isValid = true;
     if Controls.FilterCityCenterCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_CITY_CENTER") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterCommericalHubCheckbox:IsChecked() and not
+    if Controls.FilterCommericalHubCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_COMMERCIAL_HUB") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterTheaterCheckbox:IsChecked() and not
+    if Controls.FilterTheaterCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_THEATER") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterCampusCheckbox:IsChecked() and not
+    if Controls.FilterCampusCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_CAMPUS") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterIndustrialCheckbox:IsChecked() and not
+    if Controls.FilterIndustrialCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_INDUSTRIAL_ZONE") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterNeighborhoodCheckbox:IsChecked() and not
+    if Controls.FilterNeighborhoodCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_NEIGHBORHOOD") then
-        isValid = false
+        return false
     end
-    if isValid and Controls.FilterSpaceportCheckbox:IsChecked() and not
+    if Controls.FilterSpaceportCheckbox:IsChecked() and not
             hasDistrict(city, "DISTRICT_SPACEPORT") then
-        isValid = false
+        return false
     end
 
-    return isValid
+    return true
 end
 
 -- ===========================================================================
@@ -514,6 +535,14 @@ function HasMetAndAlive(player:table)
     return false;
 end
 
+function IsCityState(player:table)
+    local playerInfluence:table = player:GetInfluence();
+    if  playerInfluence:CanReceiveInfluence() then
+        return true
+    end
+    return false
+end
+
 -- ---------------------------------------------------------------------------
 -- Filter pulldown functions
 -- ---------------------------------------------------------------------------
@@ -528,11 +557,18 @@ function RefreshFilters()
 
     -- Add Players Filter
     local players:table = Game.GetPlayers();
+    local addedCityStateFilter:boolean = false
     for i, pPlayer in ipairs(players) do
-        if pPlayer:IsMajor() and HasMetAndAlive(pPlayer) and not pPlayer:IsBarbarian() then
-            local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
-            local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
-            AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
+        if ShouldAddToFilter(pPlayer) then
+            if pPlayer:IsMajor() then
+                local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
+                local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
+                AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
+            elseif not addedCityStateFilter then
+                -- Add "City States" Filter
+                AddFilter(Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE"), IsCityState);
+                addedCityStateFilter = true
+            end
         end
     end
 

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="ebdf2824-352e-49c3-90c1-743a89180da8"  version="1.0">
   <Properties>
-    <Name>LOC_BES_NAME</Name>
-    <Stability>LOC_BES_STABILITY</Stability>
-    <Teaser>LOC_BES_TEASER</Teaser>
-    <Description>LOC_BES_DESCRIPTION</Description>
-    <Authors>LOC_BES_AUTHORS</Authors>
+    <Name>Better Espionage Screen</Name>
+    <Stability>Beta</Stability>
+    <Teaser>Improves the espionage screen. Adds filters, side screens, etc.</Teaser>
+    <Description>Improves the espionage screen. Adds filters, side screens, etc.</Description>
+    <Authors>astog</Authors>
+    <AffectsSavedGames>0</AffectsSavedGames>
   </Properties>
 
-  <Components>
+  <ActionCriteria>
+    <Criteria id="Expansion1">
+      <GameCoreInUse>Expansion1</GameCoreInUse>
+    </Criteria>
+  </ActionCriteria>
+
+  <InGameActions>
     <ImportFiles id="BES_IMPORT_FILES">
       <Items>
         <File>UI/EspionageSupport.lua</File>
@@ -19,30 +26,19 @@
       </Items>
     </ImportFiles>
 
+    <ImportFiles id="BES_EXPANSION1_FILES" criteria="Expansion1">
+      <Items>
+        <File>UI/Replacements/EspionageChooser_Expansion1.lua</File>
+        <File>UI/Replacements/EspionageOverview_Expansion1.lua</File>
+      </Items>
+    </ImportFiles>
+
     <LocalizedText id="BES_TEXT">
       <Items>
         <File>Text/BES_Text.xml</File>
       </Items>
     </LocalizedText>
-  </Components>
-
-  <LocalizedText>
-    <Text id="LOC_BES_NAME">
-      <en_US>Better Espionage Screen</en_US>
-    </Text>
-    <Text id="LOC_BES_STABILITY">
-      <en_US>Alpha</en_US>
-    </Text>
-    <Text id="LOC_BES_TEASER">
-      <en_US>Improves the espionage screen. Adds filters, side screens, etc.</en_US>
-    </Text>
-    <Text id="LOC_BES_DESCRIPTION">
-      <en_US>Improves the espionage screen. Adds filters, side screens, etc.</en_US>
-    </Text>
-    <Text id="LOC_BES_AUTHORS">
-      <en_US>astog</en_US>
-    </Text>
-  </LocalizedText>
+  </InGameActions>
 
   <Files>
     <File>UI/EspionageSupport.lua</File>
@@ -51,5 +47,7 @@
     <File>UI/PartialScreens/EspionageOverview.lua</File>
     <File>UI/PartialScreens/EspionageOverview.xml</File>
     <File>Text/BES_Text.xml</File>
+    <File>UI/Replacements/EspionageChooser_Expansion1.lua</File>
+    <File>UI/Replacements/EspionageOverview_Expansion1.lua</File>
   </Files>
 </Mod>
