@@ -7,29 +7,17 @@
     <Description>Improves the espionage screen. Adds filters, side screens, etc.</Description>
     <Authors>astog</Authors>
     <AffectsSavedGames>0</AffectsSavedGames>
+    <CompatibleVersions>2.0</CompatibleVersions>
   </Properties>
-
-  <ActionCriteria>
-    <Criteria id="Expansion1">
-      <GameCoreInUse>Expansion1</GameCoreInUse>
-    </Criteria>
-  </ActionCriteria>
 
   <InGameActions>
     <ImportFiles id="BES_IMPORT_FILES">
       <Items>
-        <File>UI/EspionageSupport.lua</File>
-        <File>UI/Choosers/EspionageChooser.lua</File>
-        <File>UI/Choosers/EspionageChooser.xml</File>
-        <File>UI/PartialScreens/EspionageOverview.lua</File>
-        <File>UI/PartialScreens/EspionageOverview.xml</File>
-      </Items>
-    </ImportFiles>
-
-    <ImportFiles id="BES_EXPANSION1_FILES" criteria="Expansion1">
-      <Items>
-        <File>UI/Replacements/EspionageChooser_Expansion1.lua</File>
-        <File>UI/Replacements/EspionageOverview_Expansion1.lua</File>
+        <File>Base/Assets/UI/EspionageSupport.lua</File>
+        <File>Base/Assets/UI/Choosers/EspionageChooser.lua</File>
+        <File>Base/Assets/UI/Choosers/EspionageChooser.xml</File>
+        <File>Base/Assets/UI/PartialScreens/EspionageOverview.lua</File>
+        <File>Base/Assets/UI/PartialScreens/EspionageOverview.xml</File>
       </Items>
     </ImportFiles>
 
@@ -41,13 +29,11 @@
   </InGameActions>
 
   <Files>
-    <File>UI/EspionageSupport.lua</File>
-    <File>UI/Choosers/EspionageChooser.lua</File>
-    <File>UI/Choosers/EspionageChooser.xml</File>
-    <File>UI/PartialScreens/EspionageOverview.lua</File>
-    <File>UI/PartialScreens/EspionageOverview.xml</File>
+    <File>Base/Assets/UI/EspionageSupport.lua</File>
+    <File>Base/Assets/UI/Choosers/EspionageChooser.lua</File>
+    <File>Base/Assets/UI/Choosers/EspionageChooser.xml</File>
+    <File>Base/Assets/UI/PartialScreens/EspionageOverview.lua</File>
+    <File>Base/Assets/UI/PartialScreens/EspionageOverview.xml</File>
     <File>Text/BES_Text.xml</File>
-    <File>UI/Replacements/EspionageChooser_Expansion1.lua</File>
-    <File>UI/Replacements/EspionageOverview_Expansion1.lua</File>
   </Files>
 </Mod>
