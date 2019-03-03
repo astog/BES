@@ -48,7 +48,7 @@
     <Button         ID="CloseButton"        Anchor="L,T"  Offset="265,2" Style="CloseButtonSmall"/>
 
     <!-- Destination Filter Pulldown -->
-    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="0,157" Anchor="C,T" Size="280,25" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
+    <PullDown ID="DestinationFilterPulldown" ConsumeMouse="0" Offset="5,158" Anchor="L,T" Size="245,32" AutoSizePopUp="1" AutoFlip="1" ScrollThreshold="400">
       <ButtonData>
         <GridButton   ID="FilterButton" TextAnchor="R,C" TextOffset="15,0" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255" Offset="0,-25" Size="50,-20" Texture="Controls_ButtonControl.dds" SliceCorner="10,10" SliceSize="1,1" SliceTextureSize="24,24" />
       </ButtonData>
@@ -68,13 +68,22 @@
       </InstanceData>
 
       <!-- Show Route Text -->
-      <Label String="LOC_ESPIONAGECHOOSER_FILTER_SHOW_CITIES" Anchor="L,T" Offset="30,-19" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255"/>
-      <Image ID="PulldownOpenedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,0" Size="20,16" Anchor="L,T" Offset="7,-21"/>
-      <Image ID="PulldownClosedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,60" Size="20,16" Anchor="L,T" Offset="7,-25"/>
+      <Label String="LOC_ESPIONAGECHOOSER_FILTER_SHOW_CITIES" Anchor="L,T" Offset="30,-16" Style="FontNormal14" FontStyle="Shadow" EffectColor="0,0,0,255"/>
+      <Image ID="PulldownOpenedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,0" Size="20,16" Anchor="L,T" Offset="7,-18"/>
+      <Image ID="PulldownClosedArrow" Texture="Controls_ButtonExtendSmall2" TextureOffset="0,60" Size="20,16" Anchor="L,T" Offset="7,-22"/>
     </PullDown>
 
+    <Button ID="DistrictsFilterShownButton" Size="40,40"  Anchor="R,T" Offset="2,130" Texture="LaunchBar_Hook_ButtonSmall" Style="ButtonDisabledText">
+      <Image Anchor="C,C" Offset="0,-1" Size="26,26" IconSize="26" Icon="ICON_STAT_DISTRICTS"/>
+    </Button>
+
+    <Grid ID="DistrictsFilterGrid" Size="296,0" Offset="297,130" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16" ConsumeMouse="1" AutoSize="V" AutoSizePadding="0,3" Hidden="1">
+      <Stack ID="DistrictsFilterStack" StackGrowth="Bottom" StackPadding="5" Anchor="L,T" Offset="8,5" WrapWidth="parent-169" WrapGrowth="Right" WrapPadding="10,0"/>
+    </Grid>
+
+
     <!-- Destination Panel -->
-    <ScrollPanel    ID="DestinationPanel" Anchor="L,T" Offset="18,162" Size="parent-22,parent-160" Vertical="1" AutoScrollBar="0">
+    <ScrollPanel    ID="DestinationPanel" Anchor="L,T" Offset="18,169" Size="parent-22,parent-169" Vertical="1" AutoScrollBar="0">
       <ScrollBar    Anchor="L,C" Size="11,parent" AnchorSide="O,I" Offset="4,0" Style="ScrollVerticalBar" />
       <Stack        ID="DestinationStack" StackGrowth="Bottom" StackPadding="2" />
     </ScrollPanel>
@@ -191,5 +200,12 @@
   <!-- District Instance -->
   <Instance Name="CityDistrictInstance">
     <Image ID="DistrictIcon" Size="32,32" Texture="Districts32"/>
+  </Instance>
+
+  <Instance Name="DistrictsFilterInstance">
+    <GridButton ID="DistrictsFilterButton" Style="ButtonControl" Size="parent-20,30" Anchor="C,T" Offset="3,0">
+      <Image ID="DistrictIcon" Size="32,32" Texture="Districts32" Offset="-10,0"/>
+      <Label ID="DistrictLabel" Style="FontNormal14" Anchor="L,C" Offset="30,0"/>
+    </GridButton>
   </Instance>
 </Context>

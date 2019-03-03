@@ -55,6 +55,9 @@ local m_filterList:table = {};
 local m_filterCount:number = 0;
 local m_filterSelected:number = 1;
 
+local m_DistrictFilterChoiceIM:table = InstanceManager:new("DistrictsFilterInstance", "DistrictsFilterButton", Controls.DistrictsFilterStack);
+local m_DistrictFilterSelection:table = {}
+
 -- ===========================================================================
 function Refresh()
     if m_spy == nil then
@@ -414,10 +417,12 @@ function AddPlayerCities(player:table)
     if m_filterList[m_filterSelected].FilterFunction(player) then
         local playerCities:table = player:GetCities();
         for j, city in playerCities:Members() do
-            -- Check if the city is revealed
-            local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
-            if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
-                AddDestination(city);
+            if CheckDistrictFilters(city) then
+                -- Check if the city is revealed
+                local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
+                if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
+                    AddDestination(city);
+                end
             end
         end
     end
@@ -594,6 +599,9 @@ function OnSelectDestination(city:table)
     UI.LookAtPlot(m_city:GetX(), m_city:GetY());
 
     Refresh();
+
+    -- Close the district filter panel
+    OnDistrictFilterPanelClose()
 end
 
 -- ===========================================================================
@@ -717,6 +725,87 @@ function OnFilterSelected( index:number, filterIndex:number )
 
     print("selected filter " .. m_filterSelected)
     Refresh();
+end
+
+-- ---------------------------------------------------------------------------
+-- Disctrict Filter Panel
+-- ---------------------------------------------------------------------------
+function CheckDistrictFilters(pCity:table)
+    if table.count(m_DistrictFilterSelection) > 0 then
+        for district, isChecked in pairs(m_DistrictFilterSelection) do
+            if isChecked and not hasDistrict(pCity, district) then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+
+function BuildDistrictFilterPanel()
+    m_DistrictFilterChoiceIM:ResetInstances()
+
+    for row in GameInfo.Districts() do
+        -- Skip the following districts
+        -- 1. City Center
+        -- 2. Wonder
+        if row.DistrictType ~= "DISTRICT_CITY_CENTER" and row.DistrictType ~= "DISTRICT_WONDER" then
+            -- Ensure that this is not a district that replaces another district
+            local validRow:boolean = true
+            for replcRow in GameInfo.DistrictReplaces() do
+                if replcRow.CivUniqueDistrictType == row.DistrictType then
+                    validRow = false
+                    break
+                end
+            end
+
+            if validRow then
+                local kInstance:table = m_DistrictFilterChoiceIM:GetInstance()
+                kInstance.DistrictIcon:SetIcon("ICON_" .. row.DistrictType);
+                local sLabel:string = Locale.Lookup(row.Name);
+                kInstance.DistrictLabel:SetText(sLabel);
+                kInstance.DistrictsFilterButton:RegisterCallback(Mouse.eLClick,
+                    function()
+                        print(row.DistrictType)
+                        if not m_DistrictFilterSelection[row.DistrictType] then
+                            kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 24)
+                            m_DistrictFilterSelection[row.DistrictType] = true
+                        else
+                            kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                            m_DistrictFilterSelection[row.DistrictType] = false
+                        end
+
+                        Refresh();
+                    end)
+
+                -- If the entry already exits, use the state from history
+                if m_DistrictFilterSelection[row.DistrictType] ~= nil then
+                    if m_DistrictFilterSelection[row.DistrictType] then
+                        kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 24)
+                    else
+                        kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                    end
+                else
+                    kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                    m_DistrictFilterSelection[row.DistrictType] = false
+                end
+            end
+        end
+    end
+
+    Controls.DistrictsFilterStack:CalculateSize()
+    Controls.DistrictsFilterGrid:DoAutoSize()
+end
+
+function OnDistrictFilterPanelOpen()
+    Controls.DistrictsFilterGrid:SetHide(false)
+    Controls.DistrictsFilterShownButton:SetTextureOffsetVal(0, 40)
+    BuildDistrictFilterPanel()
+end
+
+function OnDistrictFilterPanelClose()
+    Controls.DistrictsFilterGrid:SetHide(true)
+    Controls.DistrictsFilterShownButton:SetTextureOffsetVal(0, 0)
 end
 
 -- ===========================================================================
@@ -966,6 +1055,18 @@ function Initialize()
     -- Filter Pulldown
     Controls.FilterButton:RegisterCallback( eLClick, UpdateFilterArrow );
     Controls.DestinationFilterPulldown:RegisterSelectionCallback( OnFilterSelected );
+
+    -- District Filter Panel
+    Controls.DistrictsFilterShownButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.DistrictsFilterShownButton:RegisterCallback( Mouse.eLClick,
+        function()
+            if Controls.DistrictsFilterGrid:IsHidden() then
+                OnDistrictFilterPanelOpen()
+            else
+                OnDistrictFilterPanelClose()
+            end
+        end);
+
 
     -- Game Engine Events
     Events.InterfaceModeChanged.Add( OnInterfaceModeChanged );
