@@ -661,20 +661,21 @@ function RefreshFilters()
 
     -- Add Players Filter
     local players:table = Game.GetPlayers();
-    local addedCityStateFilter:boolean = false
     for i, pPlayer in ipairs(players) do
         if ShouldAddToFilter(pPlayer) then
             if pPlayer:IsMajor() then
                 local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
                 local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
                 AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
-            elseif not addedCityStateFilter then
-                -- Add "City States" Filter
-                AddFilter(Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE"), function(a) a:IsMinor() end);
-                addedCityStateFilter = true
             end
         end
     end
+
+    -- Add "City States" Filter
+    AddFilter(Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE"), function(a) return a:IsMinor() end);
+
+    -- Add International Filter
+    AddFilter(Locale.Lookup("LOC_ESPIONAGECHOOSER_FILTER_INTERNATIONAL"), function(a) return a:GetID() ~= Game.GetLocalPlayer() end);
 
     -- Add filters to pulldown
     for index, filter in ipairs(m_filterList) do
@@ -847,6 +848,7 @@ function Open()
         m_AnimSupport:Show();
     end
 
+    BuildDistrictFilterPanel()
     Refresh();
 
     -- Play opening sound

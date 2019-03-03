@@ -77,7 +77,7 @@
       <Image Anchor="C,C" Offset="0,-1" Size="26,26" IconSize="26" Icon="ICON_STAT_DISTRICTS"/>
     </Button>
 
-    <Grid ID="DistrictsFilterGrid" Size="296,0" Offset="297,130" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16" ConsumeMouse="1" AutoSize="V" AutoSizePadding="0,3" Hidden="1">
+    <Grid ID="DistrictsFilterGrid" Size="216,0" Offset="297,130" Texture="Controls_ContainerBlue" SliceStart="0,0" SliceCorner="3,3" SliceSize="9,9" SliceTextureSize="16,16" ConsumeMouse="1" AutoSize="V" AutoSizePadding="0,3" Hidden="1">
       <Stack ID="DistrictsFilterStack" StackGrowth="Bottom" StackPadding="5" Anchor="L,T" Offset="8,5" WrapWidth="parent-169" WrapGrowth="Right" WrapPadding="10,0"/>
     </Grid>
 
