@@ -43,6 +43,14 @@ local m_MissionHistoryIM:table  = InstanceManager:new("MissionHistoryInstance", 
 local m_tabs:table = nil;
 local m_selectedTab:number = -1;
 
+-- Stores filter list and tracks the currently selected list
+local m_filterList:table = {};
+local m_filterCount:number = 0;
+local m_filterSelected:number = 1;
+
+local m_DistrictFilterChoiceIM:table = InstanceManager:new("DistrictsFilterInstance", "DistrictsFilterButton", Controls.DistrictsFilterStack);
+local m_DistrictFilterSelection:table = {}
+
 -- ===========================================================================
 function Refresh()
     -- Refresh Tabs
@@ -59,6 +67,7 @@ function Refresh()
         Controls.CityActivityTabContainer:SetHide(false);
         Controls.MissionHistoryTabContainer:SetHide(true);
 
+        RefreshFilters();
         RefreshCityActivity();
     elseif m_selectedTab == EspionageTabs.MISSION_HISTORY then
         Controls.OperativeTabContainer:SetHide(true);
@@ -346,12 +355,16 @@ end
 
 -- ===========================================================================
 function AddPlayerCities(player:table)
-    local playerCities:table = player:GetCities();
-    for j, city in playerCities:Members() do
-        -- Check if the city is revealed
-        local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
-        if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
-            AddCity(city);
+    if m_filterList[m_filterSelected].FilterFunction(player) then
+        local playerCities:table = player:GetCities();
+        for j, city in playerCities:Members() do
+            if CheckDistrictFilters(city) then
+                -- Check if the city is revealed
+                local localPlayerVis:table = PlayersVisibility[Game.GetLocalPlayer()];
+                if localPlayerVis:IsRevealed(city:GetX(), city:GetY()) then
+                    AddCity(city);
+                end
+            end
         end
     end
 end
@@ -932,6 +945,195 @@ function OnLocalPlayerTurnEnd()
     end
 end
 
+-- ---------------------------------------------------------------------------
+-- Filter helper functions
+-- ---------------------------------------------------------------------------
+
+function HasMetAndAlive(player:table)
+    local localPlayerID = Game.GetLocalPlayer()
+    if localPlayerID == player:GetID() then
+        return true
+    end
+
+    local localPlayer = Players[localPlayerID];
+    local localPlayerDiplomacy = localPlayer:GetDiplomacy();
+
+    if player:IsAlive() and localPlayerDiplomacy:HasMet(player:GetID()) then
+        return true;
+    end
+
+    return false;
+end
+
+function ShouldAddToFilter(player:table)
+    if HasMetAndAlive(player) and (not player:IsBarbarian()) then
+        return true
+    end
+    return false
+end
+
+-- ---------------------------------------------------------------------------
+-- Filter pulldown functions
+-- ---------------------------------------------------------------------------
+function RefreshFilters()
+    -- Clear current filters
+    Controls.DestinationFilterPulldown:ClearEntries();
+    m_filterList = {};
+    m_filterCount = 0;
+
+    -- Add "All" Filter
+    AddFilter(Locale.Lookup("LOC_ESPIONAGECHOOSER_FILTER_ALL"), function(a) return true; end);
+
+    -- Add Players Filter
+    local players:table = Game.GetPlayers();
+    for i, pPlayer in ipairs(players) do
+        if ShouldAddToFilter(pPlayer) then
+            if pPlayer:IsMajor() then
+                local playerConfig:table = PlayerConfigurations[pPlayer:GetID()];
+                local name = Locale.Lookup(GameInfo.Civilizations[playerConfig:GetCivilizationTypeID()].Name);
+                AddFilter(name, function(a) return a:GetID() == pPlayer:GetID() end);
+            end
+        end
+    end
+
+    -- Add "City States" Filter
+    AddFilter(Locale.Lookup("LOC_HUD_REPORTS_CITY_STATE"), function(a) return a:IsMinor() end);
+
+    -- Add International Filter
+    AddFilter(Locale.Lookup("LOC_ESPIONAGECHOOSER_FILTER_INTERNATIONAL"), function(a) return a:GetID() ~= Game.GetLocalPlayer() end);
+
+    -- Add filters to pulldown
+    for index, filter in ipairs(m_filterList) do
+        AddFilterEntry(index);
+    end
+
+    -- Select first filter
+    Controls.FilterButton:SetText(m_filterList[m_filterSelected].FilterText);
+
+    -- Calculate Internals
+    Controls.DestinationFilterPulldown:CalculateInternals();
+
+    UpdateFilterArrow();
+end
+
+function AddFilter( filterName:string, filterFunction )
+    -- Make sure we don't add duplicate filters
+    for index, filter in ipairs(m_filterList) do
+        if filter.FilterText == filterName then
+            return;
+        end
+    end
+
+    m_filterCount = m_filterCount + 1;
+    m_filterList[m_filterCount] = {FilterText=filterName, FilterFunction=filterFunction};
+end
+
+function AddFilterEntry( filterIndex:number )
+    local filterEntry:table = {};
+    Controls.DestinationFilterPulldown:BuildEntry( "FilterEntry", filterEntry );
+    filterEntry.Button:SetText(m_filterList[filterIndex].FilterText);
+    filterEntry.Button:SetVoids(i, filterIndex);
+end
+
+function UpdateFilterArrow()
+    if Controls.DestinationFilterPulldown:IsOpen() then
+        Controls.PulldownOpenedArrow:SetHide(true);
+        Controls.PulldownClosedArrow:SetHide(false);
+    else
+        Controls.PulldownOpenedArrow:SetHide(false);
+        Controls.PulldownClosedArrow:SetHide(true);
+    end
+end
+
+function OnFilterSelected( index:number, filterIndex:number )
+    m_filterSelected = filterIndex;
+    Controls.FilterButton:SetText(m_filterList[m_filterSelected].FilterText);
+
+    print("selected filter " .. m_filterSelected)
+    Refresh();
+end
+
+-- ---------------------------------------------------------------------------
+-- Disctrict Filter Panel
+-- ---------------------------------------------------------------------------
+function CheckDistrictFilters(pCity:table)
+    if table.count(m_DistrictFilterSelection) > 0 then
+        for district, isChecked in pairs(m_DistrictFilterSelection) do
+            if isChecked and not hasDistrict(pCity, district) then
+                return false
+            end
+        end
+    end
+    return true
+end
+
+
+function BuildDistrictFilterPanel()
+    m_DistrictFilterChoiceIM:ResetInstances()
+
+    for row in GameInfo.Districts() do
+        -- Skip the following districts
+        -- 1. City Center
+        -- 2. Wonder
+        if row.DistrictType ~= "DISTRICT_CITY_CENTER" and row.DistrictType ~= "DISTRICT_WONDER" then
+            -- Ensure that this is not a district that replaces another district
+            local validRow:boolean = true
+            for replcRow in GameInfo.DistrictReplaces() do
+                if replcRow.CivUniqueDistrictType == row.DistrictType then
+                    validRow = false
+                    break
+                end
+            end
+
+            if validRow then
+                local kInstance:table = m_DistrictFilterChoiceIM:GetInstance()
+                kInstance.DistrictIcon:SetIcon("ICON_" .. row.DistrictType);
+                local sLabel:string = Locale.Lookup(row.Name);
+                kInstance.DistrictLabel:SetText(sLabel);
+                kInstance.DistrictsFilterButton:RegisterCallback(Mouse.eLClick,
+                    function()
+                        print(row.DistrictType)
+                        if not m_DistrictFilterSelection[row.DistrictType] then
+                            kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 24)
+                            m_DistrictFilterSelection[row.DistrictType] = true
+                        else
+                            kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                            m_DistrictFilterSelection[row.DistrictType] = false
+                        end
+
+                        Refresh();
+                    end)
+
+                -- If the entry already exits, use the state from history
+                if m_DistrictFilterSelection[row.DistrictType] ~= nil then
+                    if m_DistrictFilterSelection[row.DistrictType] then
+                        kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 24)
+                    else
+                        kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                    end
+                else
+                    kInstance.DistrictsFilterButton:SetTextureOffsetVal(0, 0)
+                    m_DistrictFilterSelection[row.DistrictType] = false
+                end
+            end
+        end
+    end
+
+    Controls.DistrictsFilterStack:CalculateSize()
+    Controls.DistrictsFilterGrid:DoAutoSize()
+end
+
+function OnDistrictFilterPanelOpen()
+    Controls.DistrictsFilterGrid:SetHide(false)
+    Controls.DistrictsFilterShownButton:SetTextureOffsetVal(0, 40)
+    BuildDistrictFilterPanel()
+end
+
+function OnDistrictFilterPanelClose()
+    Controls.DistrictsFilterGrid:SetHide(true)
+    Controls.DistrictsFilterShownButton:SetTextureOffsetVal(0, 0)
+end
+
 -- ===========================================================================
 --  Game Event
 -- ===========================================================================
@@ -1036,6 +1238,21 @@ function Initialize()
     Controls.CloseButton:RegisterCallback(Mouse.eLClick, OnClose);
     Controls.CloseButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
     Controls.CapturedEnemyOperativeContainer:RegisterSizeChanged( OnCapturedEnemyOperativeContainerSizeChanged );
+
+    -- Filter Pulldown
+    Controls.FilterButton:RegisterCallback( eLClick, UpdateFilterArrow );
+    Controls.DestinationFilterPulldown:RegisterSelectionCallback( OnFilterSelected );
+
+    -- District Filter Panel
+    Controls.DistrictsFilterShownButton:RegisterCallback( Mouse.eMouseEnter, function() UI.PlaySound("Main_Menu_Mouse_Over"); end);
+    Controls.DistrictsFilterShownButton:RegisterCallback( Mouse.eLClick,
+        function()
+            if Controls.DistrictsFilterGrid:IsHidden() then
+                OnDistrictFilterPanelOpen()
+            else
+                OnDistrictFilterPanelClose()
+            end
+        end);
 
     -- Lua Events
     LuaEvents.PartialScreenHooks_OpenEspionage.Add( OnOpen );
