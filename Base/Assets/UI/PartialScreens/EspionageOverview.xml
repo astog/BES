@@ -210,8 +210,8 @@
             <Label ID="CapturingCivName" Anchor="L,C" Style="FontNormal16"/>
           </Stack>
 
-          <GridButton ID="AskForTradeButton" Size="150,24" Offset="4,0" Anchor="R,C" String="LOC_ESPIONAGEOVERVIEW_ASK_FOR_TRADE" Style="FontNormal16" FontStyle="Shadows" TextOffset="0,2" EffectColor="0,0,0,255">
-            <GridData Style="ButtonLightWeightGrid"/>
+          <GridButton ID="AskForTradeButton" Size="150,24" Offset="4,0" Anchor="R,C" String="LOC_ESPIONAGEOVERVIEW_ASK_FOR_TRADE" Style="FontNormal16" FontStyle="Shadows" TextOffset="0,1" EffectColor="0,0,0,255">
+            <GridData Style="ButtonLightWeightSmallGrid"/>
           </GridButton>
         </Grid>
       </Container>
