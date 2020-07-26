@@ -223,7 +223,23 @@ function RefreshMissionList()
                 local cityPlot:table = Map.GetPlot(m_city:GetX(), m_city:GetY());
                 local canStart:boolean, results:table = UnitManager.CanStartOperation( m_spy, operation.Hash, cityPlot, false, true);
                 if canStart then
-                    AddAvailableOffensiveOperation(operation, results, cityPlot);
+					local bAddedOperation:boolean = false;
+
+					-- Look through the results to determine if this operation is targeting a specific district
+					if results and results[UnitOperationResults.PLOTS] then
+						for i,districtPlotID in ipairs(results[UnitOperationResults.PLOTS]) do
+							local pTargetPlot:table = Map.GetPlotByIndex(districtPlotID);
+							if pTargetPlot ~= nil then
+								AddAvailableOffensiveOperation(operation, results, pTargetPlot);
+								bAddedOperation = true;
+							end
+						end
+					end
+
+					-- If the operation wasn't added with a specific district then just use the city
+					if bAddedOperation == false then
+                    	AddAvailableOffensiveOperation(operation, results, cityPlot);
+					end
                 else
                     ---- If we're provided with a failure reason then show the mission disabled
                     if results and results[UnitOperationResults.FAILURE_REASONS] then
@@ -335,8 +351,8 @@ function AddDisabledOffensiveOperation(operation:table, result:table, targetCity
 end
 
 -- ===========================================================================
-function AddAvailableOffensiveOperation(operation:table, result:table, targetCityPlot:table)
-    local missionInstance:table = AddOffensiveOperation(operation, result, targetCityPlot);
+function AddAvailableOffensiveOperation(operation:table, result:table, pTargetPlot:table)
+	local missionInstance:table = AddOffensiveOperation(operation, result, pTargetPlot);
 
     -- Update mission details
     missionInstance.MissionDetails:SetText(GetFormattedOperationDetailText(operation, m_spy, m_city));
@@ -347,7 +363,7 @@ function AddAvailableOffensiveOperation(operation:table, result:table, targetCit
 
     -- If this is the mission choose set callback to open up mission briefing
     if m_currentChooserMode == EspionageChooserModes.MISSION_CHOOSER then
-        missionInstance.MissionButton:RegisterCallback( Mouse.eLClick, function() OnMissionSelected(operation, missionInstance); end );
+		missionInstance.MissionButton:RegisterCallback( Mouse.eLClick, function() OnMissionSelected(operation, missionInstance, pTargetPlot); end );
     end
 
     -- While in DESTINATION_CHOOSER mode we don't want the buttons to act
@@ -370,8 +386,8 @@ function OnCounterspySelected(districtPlot:table)
 end
 
 -- ===========================================================================
-function OnMissionSelected(operation:table, instance:table)
-    LuaEvents.EspionageChooser_ShowMissionBriefing(operation.Hash, m_spy:GetID());
+function OnMissionSelected(operation:table, instance:table, pTargetPlot:table)
+	LuaEvents.EspionageChooser_ShowMissionBriefing(operation.Hash, m_spy:GetID(), pTargetPlot);
 
     -- Hide all selection borders before selecting another
     for i=1, m_MissionStackIM.m_iCount, 1 do
