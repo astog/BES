@@ -24,6 +24,7 @@
     <LocalizedText id="BES_TEXT">
       <Items>
         <File>Text/BES_Text.xml</File>
+        <File>Text/BES_Text_pt_br.xml</File>
       </Items>
     </LocalizedText>
   </InGameActions>
@@ -35,5 +36,6 @@
     <File>Base/Assets/UI/PartialScreens/EspionageOverview.lua</File>
     <File>Base/Assets/UI/PartialScreens/EspionageOverview.xml</File>
     <File>Text/BES_Text.xml</File>
+    <File>Text/BES_Text_pt_br.xml</File>
   </Files>
 </Mod>
